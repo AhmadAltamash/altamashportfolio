@@ -9,9 +9,12 @@ import Swal from 'sweetalert2';
 const TECH_ICONS = {
   React: Globe,
   Tailwind: Layout,
+  ShadcnUi: Layout,
   Express: Cpu,
   Python: Code,
+  NextJS: Code,
   Javascript: Code,
+  TypeScript: Code,
   HTML: Code,
   CSS: Code,
   default: Package,
@@ -61,7 +64,7 @@ const ProjectStats = ({ project }) => {
         </div>
         <div className="flex-grow">
           <div className="text-lg md:text-xl font-semibold text-blue-200">{techStackCount}</div>
-          <div className="text-[10px] md:text-xs text-gray-400">Total Teknologi</div>
+          <div className="text-[10px] md:text-xs text-gray-400">Total Technologies</div>
         </div>
       </div>
 
@@ -71,7 +74,7 @@ const ProjectStats = ({ project }) => {
         </div>
         <div className="flex-grow">
           <div className="text-lg md:text-xl font-semibold text-purple-200">{featuresCount}</div>
-          <div className="text-[10px] md:text-xs text-gray-400">Fitur Utama</div>
+          <div className="text-[10px] md:text-xs text-gray-400">Key Features</div>
         </div>
       </div>
     </div>
@@ -110,7 +113,7 @@ const ProjectDetails = () => {
         ...selectedProject,
         Features: selectedProject.Features || [],
         TechStack: selectedProject.TechStack || [],
-        Github: selectedProject.Github || 'https://github.com/EkiZR',
+        Github: selectedProject.Github || 'https://github.com/AhmadAltamash',
       };
       setProject(enhancedProject);
     }
