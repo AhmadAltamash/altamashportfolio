@@ -32,7 +32,7 @@ const socialLinks = [
     displayName: "Youtube",
     subText: "@eki zulfar",
     icon: Youtube,
-    url: "https://www.youtube.com/@eki_zulfar",
+    url: "",
     color: "#FF0000",
     gradient: "from-[#FF0000] to-[#CC0000]"
   },
