@@ -12,6 +12,7 @@ const TECH_ICONS = {
   ShadcnUi: Layout,
   Express: Cpu,
   Python: Code,
+  JSP: Code,
   NextJS: Code,
   Javascript: Code,
   TypeScript: Code,
