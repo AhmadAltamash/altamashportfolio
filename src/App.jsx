@@ -13,6 +13,7 @@ import ThankYouPage from "./Pages/ThankYou";
 import JoinAvailabilityButton from "./components/JoinAvailabilityButton";
 import { AnimatePresence } from 'framer-motion';
 import { AdminAuthProvider } from "./context/AdminAuthContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import AdminRoute from "./components/AdminRoute";
 
 // Portfolio (MUI + react-swipeable-views) and the project detail page are
@@ -46,40 +47,43 @@ const SectionFallback = () => (
 const LandingPage = ({ showWelcome, setShowWelcome }) => {
   return (
     <>
+      {/* The welcome screen overlays on top (it's `fixed inset-0` with a
+          high z-index) rather than gating what's underneath — the real
+          content below is always in the DOM from first paint. Previously
+          this whole block only rendered once showWelcome became false,
+          which meant search engine crawlers (and anyone whose JS is slow
+          to run the dismiss timer) could see an empty shell with no actual
+          page content. */}
       <AnimatePresence mode="wait">
         {showWelcome && (
           <WelcomeScreen onLoadingComplete={() => setShowWelcome(false)} />
         )}
       </AnimatePresence>
 
-      {!showWelcome && (
-        <>
-          <Navbar />
-          <AnimatedBackground />
-          <Home />
-          <About />
-          <Experience />
-          <Suspense fallback={<SectionFallback />}>
-            <Portofolio />
-          </Suspense>
-          <Suspense fallback={<SectionFallback />}>
-            <ContactPage />
-          </Suspense>
-          <footer>
-            <center>
-              <hr className="my-3 border-gray-400 opacity-15 sm:mx-auto lg:my-6 text-center" />
-              <span className="block text-sm pb-4 text-[var(--text-secondary)] text-center">
-                © 2026{" "}
-                <a href="/" className="hover:underline cursor-pointer">
-                  Altamash Ahmad
-                </a>
-                . All Rights Reserved.
-              </span>
-            </center>
-          </footer>
-          <JoinAvailabilityButton />
-        </>
-      )}
+      <Navbar />
+      <AnimatedBackground />
+      <Home />
+      <About />
+      <Experience />
+      <Suspense fallback={<SectionFallback />}>
+        <Portofolio />
+      </Suspense>
+      <Suspense fallback={<SectionFallback />}>
+        <ContactPage />
+      </Suspense>
+      <footer>
+        <center>
+          <hr className="my-3 border-gray-400 opacity-15 sm:mx-auto lg:my-6 text-center" />
+          <span className="block text-sm pb-4 text-[var(--text-secondary)] text-center">
+            © 2026{" "}
+            <a href="/" className="hover:underline cursor-pointer">
+              Altamash
+            </a>
+            . All Rights Reserved.
+          </span>
+        </center>
+      </footer>
+      <JoinAvailabilityButton />
     </>
   );
 };
@@ -95,7 +99,7 @@ const ProjectPageLayout = () => (
         <span className="block text-sm pb-4 text-[var(--text-secondary)] text-center">
           © 2026{" "}
           <a href="/" className="hover:underline">
-            Altamash Ahmad
+            Altamash
           </a>
           . All Rights Reserved.
         </span>
@@ -124,8 +128,9 @@ function App() {
   }, []);
 
   return (
-    <AdminAuthProvider>
-      <BrowserRouter>
+    <ThemeProvider>
+      <AdminAuthProvider>
+        <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage showWelcome={showWelcome} setShowWelcome={setShowWelcome} />} />
           <Route path="/project/:id" element={<ProjectPageLayout />} />
@@ -156,8 +161,9 @@ function App() {
             <Route path="settings" element={<AdminSettings />} />
           </Route>
         </Routes>
-      </BrowserRouter>
-    </AdminAuthProvider>
+        </BrowserRouter>
+      </AdminAuthProvider>
+    </ThemeProvider>
   );
 }
 

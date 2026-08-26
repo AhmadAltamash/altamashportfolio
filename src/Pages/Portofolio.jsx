@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { db, collection } from "../firebase";
 import { getDocs } from "firebase/firestore";
 import PropTypes from "prop-types";
@@ -181,6 +181,13 @@ export default function FullWidthTabs() {
         TechStack: doc.data().TechStack || [],
       }));
 
+      // Lower Order shows first; projects without an Order set fall to the end.
+      projectData.sort((a, b) => {
+        const orderA = a.Order ?? Infinity;
+        const orderB = b.Order ?? Infinity;
+        return orderA - orderB;
+      });
+
       const certificateData = certificateSnapshot.docs.map((doc) => doc.data());
 
       setProjects(projectData);
@@ -212,6 +219,17 @@ export default function FullWidthTabs() {
 
   const displayedProjects = showAllProjects ? projects : projects.slice(0, PROJECTS_INITIAL_COUNT);
   const displayedCertificates = showAllCertificates ? certificates : certificates.slice(0, initialItems);
+
+  // animateHeight (below) only recalculates the SwipeableViews container's
+  // height automatically when the active tab changes — not when the content
+  // of the currently-active tab grows or shrinks in place, e.g. clicking
+  // "See More"/"See Less". Without this, expanding within the same tab could
+  // get clipped instead of properly resizing. Nudge it manually whenever the
+  // visible item count changes.
+  const swipeableActionsRef = useRef(null);
+  useEffect(() => {
+    swipeableActionsRef.current?.updateHeight();
+  }, [displayedProjects.length, displayedCertificates.length]);
 
   return (
     <div className="md:px-[10%] px-[5%] w-full sm:mt-0 mt-[3rem] bg-[var(--bg-primary)] overflow-hidden" id="Portfolio">
@@ -324,6 +342,8 @@ export default function FullWidthTabs() {
           axis={theme.direction === "rtl" ? "x-reverse" : "x"}
           index={value}
           onChangeIndex={setValue}
+          animateHeight
+          action={(actions) => { swipeableActionsRef.current = actions; }}
         >
           <TabPanel value={value} index={0} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">

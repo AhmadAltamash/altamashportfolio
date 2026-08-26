@@ -17,10 +17,10 @@ const JoinAvailabilityButton = () => {
   return (
     <div className="fixed bottom-6 right-6 z-[999]">
       {open && (
-        <div className="absolute bottom-16 right-0 w-[calc(100vw-3rem)] max-w-[320px] bg-[#0a0a1a] border border-white/10 rounded-2xl shadow-2xl shadow-black/50 p-5 mb-2 animate-[fadeIn_0.2s_ease-out]">
+        <div className="absolute bottom-16 right-0 w-[calc(100vw-3rem)] max-w-[320px] bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl shadow-2xl shadow-black/50 p-5 mb-2 animate-[fadeIn_0.2s_ease-out]">
           <button
             onClick={() => setOpen(false)}
-            className="absolute top-3 right-3 text-gray-500 hover:text-white transition-colors"
+            className="absolute top-3 right-3 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
             aria-label="Close"
           >
             <X className="w-4 h-4" />
@@ -31,12 +31,12 @@ const JoinAvailabilityButton = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
             </span>
-            <h3 className="text-white font-semibold text-base leading-tight">
+            <h3 className="text-[var(--text-primary)] font-semibold text-base leading-tight">
               Immediately Available to Join
             </h3>
           </div>
 
-          <p className="text-sm text-gray-400 leading-relaxed mb-4">
+          <p className="text-sm text-text-secondary leading-relaxed mb-4">
             Ready to start immediately! Experienced full-stack developer seeking exciting
             opportunities to contribute to innovative teams and projects.
           </p>

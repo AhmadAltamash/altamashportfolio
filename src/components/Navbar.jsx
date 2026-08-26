@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
+import { useTheme } from "../context/ThemeContext";
 
 // Module-level so it has a stable reference across renders — the mount-only
 // effect below can safely depend on it without needing to re-run on every render.
@@ -15,6 +16,7 @@ const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [activeSection, setActiveSection] = useState("Home");
+    const { theme, toggleTheme } = useTheme();
 
     useEffect(() => {
         // Cache each section's offset/height once (and on resize) instead
@@ -96,9 +98,9 @@ const Navbar = () => {
         <nav
         className={`fixed w-full top-0 z-50 transition-all duration-500 ${
             isOpen
-                ? "bg-[#030014] opacity-100"
+                ? "bg-[var(--bg-primary)] opacity-100"
                 : scrolled
-                ? "bg-[#030014]/50 backdrop-blur-xl"
+                ? "bg-bg-primary/70 backdrop-blur-xl"
                 : "bg-transparent"
         }`}
     >
@@ -116,8 +118,8 @@ const Navbar = () => {
                 </div>
     
                 {/* Desktop Navigation */}
-                <div className="hidden md:block">
-                    <div className="ml-8 flex items-center space-x-8">
+                <div className="hidden md:flex items-center gap-6">
+                    <div className="flex items-center space-x-8">
                         {navItems.map((item) => (
                             <a
                                 key={item.label}
@@ -129,7 +131,7 @@ const Navbar = () => {
                                     className={`relative z-10 transition-colors duration-300 ${
                                         activeSection === item.href.substring(1)
                                             ? "bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent font-semibold"
-                                            : "text-[#e2d3fd] group-hover:text-white"
+                                            : "text-text-secondary group-hover:text-[var(--text-primary)]"
                                     }`}
                                 >
                                     {item.label}
@@ -144,13 +146,28 @@ const Navbar = () => {
                             </a>
                         ))}
                     </div>
+
+                    <button
+                        onClick={toggleTheme}
+                        aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+                        className="p-2 rounded-full text-text-secondary hover:text-[var(--text-primary)] bg-[var(--card-bg)] hover:bg-[var(--card-bg-hover)] border border-[var(--border-color)] transition-colors"
+                    >
+                        {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                    </button>
                 </div>
     
                 {/* Mobile Menu Button */}
-                <div className="md:hidden">
+                <div className="md:hidden flex items-center gap-2">
+                    <button
+                        onClick={toggleTheme}
+                        aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+                        className="p-2 rounded-full text-text-secondary hover:text-[var(--text-primary)] bg-[var(--card-bg)] border border-[var(--border-color)] transition-colors"
+                    >
+                        {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                    </button>
                     <button
                         onClick={() => setIsOpen(!isOpen)}
-                        className={`relative p-2 text-[#e2d3fd] hover:text-white transition-transform duration-300 ease-in-out transform ${
+                        className={`relative p-2 text-text-secondary hover:text-[var(--text-primary)] transition-transform duration-300 ease-in-out transform ${
                             isOpen ? "rotate-90 scale-125" : "rotate-0 scale-100"
                         }`}
                     >
@@ -166,7 +183,7 @@ const Navbar = () => {
     
         {/* Mobile Menu Overlay */}
         <div
-            className={`md:hidden h-2/5 fixed inset-0 bg-[#030014] transition-all duration-300 ease-in-out ${
+            className={`md:hidden fixed inset-0 overflow-y-auto bg-[var(--bg-primary)] transition-all duration-300 ease-in-out ${
                 isOpen
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-[-100%] pointer-events-none"

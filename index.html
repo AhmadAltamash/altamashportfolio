@@ -4,6 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- Set the theme class before first paint so light-mode users don't
+         see a flash of the dark theme while React is still loading. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var isLight = stored
+            ? stored === "light"
+            : window.matchMedia("(prefers-color-scheme: light)").matches;
+          if (isLight) document.documentElement.classList.add("light");
+        } catch {
+          // localStorage/matchMedia unavailable (private mode, older browser,
+          // etc.) — fall back to the default dark theme, no harm done.
+        }
+      })();
+    </script>
+
     <!-- Primary SEO -->
     <title>Altamash Ahmad | Full Stack Web Developer Portfolio</title>
     <meta

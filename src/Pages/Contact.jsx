@@ -56,8 +56,8 @@ const ContactPage = () => {
         text: 'Something went wrong. Please try again later.',
         icon: 'error',
         confirmButtonColor: '#6366f1',
-        background: '#030014',
-        color: '#ffffff',
+        background: 'var(--bg-secondary)',
+        color: 'var(--text-primary)',
       });
     } finally {
       setIsSubmitting(false);

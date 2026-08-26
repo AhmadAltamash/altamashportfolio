@@ -59,7 +59,7 @@ const ProjectStats = ({ project }) => {
   const featuresCount = project?.Features?.length || 0;
 
   return (
-    <div className="grid grid-cols-2 gap-3 md:gap-4 p-3 md:p-4 bg-[#0a0a1a] rounded-xl overflow-hidden relative">
+    <div className="grid grid-cols-2 gap-3 md:gap-4 p-3 md:p-4 bg-[var(--bg-secondary)] rounded-xl overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20 opacity-50 blur-2xl z-0" />
 
       <div className="relative z-10 flex items-center space-x-2 md:space-x-3 bg-[var(--card-bg)] p-2 md:p-3 rounded-lg border border-blue-500/20 transition-all duration-300 hover:scale-105 hover:border-blue-500/50 hover:shadow-lg">
@@ -93,8 +93,8 @@ const handleGithubClick = (githubLink) => {
       text: 'Maaf, source code untuk proyek ini bersifat privat.',
       confirmButtonText: 'Mengerti',
       confirmButtonColor: '#3085d6',
-      background: '#030014',
-      color: '#ffffff'
+      background: 'var(--bg-secondary)',
+      color: 'var(--text-primary)'
     });
     return false;
   }

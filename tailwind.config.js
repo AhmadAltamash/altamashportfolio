@@ -14,6 +14,8 @@ export default {
 			colors: {
 				'text-primary': 'rgb(var(--text-primary-rgb) / <alpha-value>)',
 				'text-secondary': 'rgb(var(--text-secondary-rgb) / <alpha-value>)',
+				'bg-primary': 'rgb(var(--bg-primary-rgb) / <alpha-value>)',
+				'bg-secondary': 'rgb(var(--bg-secondary-rgb) / <alpha-value>)',
 			},
 		  },
 		},
