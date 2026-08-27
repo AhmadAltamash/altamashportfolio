@@ -13,6 +13,7 @@ const emptyForm = {
   Github: "",
   TechStack: "",   // comma-separated in the form, array in Firestore
   Features: "",    // one per line in the form, array in Firestore
+  Order: "",       // lower shows first; blank/unset sorts to the end
 };
 
 const AdminProjects = () => {
@@ -29,7 +30,13 @@ const AdminProjects = () => {
   const load = async () => {
     setLoading(true);
     const snap = await getDocs(collection(db, "projects"));
-    setProjects(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    const data = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    data.sort((a, b) => {
+      const orderA = a.Order ?? Infinity;
+      const orderB = b.Order ?? Infinity;
+      return orderA - orderB;
+    });
+    setProjects(data);
     setLoading(false);
   };
 
@@ -54,6 +61,7 @@ const AdminProjects = () => {
       Github: project.Github || "",
       TechStack: (project.TechStack || []).join(", "),
       Features: (project.Features || []).join("\n"),
+      Order: project.Order ?? "",
     });
     setImageFile(null);
     setImagePreview(project.Img || "");
@@ -86,6 +94,7 @@ const AdminProjects = () => {
         Github: form.Github.trim(),
         TechStack: form.TechStack.split(",").map((s) => s.trim()).filter(Boolean),
         Features: form.Features.split("\n").map((s) => s.trim()).filter(Boolean),
+        Order: form.Order === "" ? null : Number(form.Order),
       };
 
       if (editingId) {
@@ -136,6 +145,9 @@ const AdminProjects = () => {
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold truncate">{p.Title}</h3>
                 <p className="text-sm text-gray-400 line-clamp-2">{p.Description}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Order: {p.Order ?? "—"}
+                </p>
               </div>
               <div className="flex flex-col gap-2 shrink-0">
                 <button onClick={() => openEdit(p)} className="p-2 rounded-lg bg-white/5 hover:bg-white/10">
@@ -171,6 +183,13 @@ const AdminProjects = () => {
               </div>
 
               <Field label="Title" value={form.Title} onChange={(v) => setForm({ ...form, Title: v })} required />
+              <Field
+                label="Display order (lower = shows first, leave blank for last)"
+                type="number"
+                value={form.Order}
+                onChange={(v) => setForm({ ...form, Order: v })}
+                placeholder="1"
+              />
               <div>
                 <label className="block text-sm mb-1">Description</label>
                 <textarea

@@ -12,6 +12,7 @@ const AdminCertificates = () => {
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
   const [issuer, setIssuer] = useState("");
+  const [order, setOrder] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [existingImg, setExistingImg] = useState("");
@@ -21,7 +22,13 @@ const AdminCertificates = () => {
   const load = async () => {
     setLoading(true);
     const snap = await getDocs(collection(db, "certificates"));
-    setCertificates(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    const data = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    data.sort((a, b) => {
+      const orderA = a.Order ?? Infinity;
+      const orderB = b.Order ?? Infinity;
+      return orderA - orderB;
+    });
+    setCertificates(data);
     setLoading(false);
   };
 
@@ -31,6 +38,7 @@ const AdminCertificates = () => {
     setEditingId(null);
     setTitle("");
     setIssuer("");
+    setOrder("");
     setImageFile(null);
     setImagePreview("");
     setExistingImg("");
@@ -42,6 +50,7 @@ const AdminCertificates = () => {
     setEditingId(cert.id);
     setTitle(cert.Title || "");
     setIssuer(cert.Issuer || "");
+    setOrder(cert.Order ?? "");
     setImageFile(null);
     setImagePreview(cert.Img || "");
     setExistingImg(cert.Img || "");
@@ -67,7 +76,12 @@ const AdminCertificates = () => {
       }
       if (!imgUrl) throw new Error("Please choose a certificate image.");
 
-      const payload = { Img: imgUrl, Title: title.trim(), Issuer: issuer.trim() };
+      const payload = {
+        Img: imgUrl,
+        Title: title.trim(),
+        Issuer: issuer.trim(),
+        Order: order === "" ? null : Number(order),
+      };
 
       if (editingId) {
         await updateDoc(doc(db, "certificates", editingId), payload);
@@ -113,6 +127,7 @@ const AdminCertificates = () => {
             <div key={c.id} className="bg-white/5 border border-white/10 rounded-xl p-3">
               <img src={c.Img} alt={c.Title || "Certificate"} className="w-full h-28 object-cover rounded-lg mb-2" />
               {c.Title && <p className="text-sm font-medium truncate">{c.Title}</p>}
+              <p className="text-xs text-gray-500">Order: {c.Order ?? "—"}</p>
               <div className="flex gap-2 mt-2">
                 <button onClick={() => openEdit(c)} className="flex-1 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs flex items-center justify-center gap-1">
                   <Pencil className="w-3 h-3" /> Edit
@@ -147,6 +162,13 @@ const AdminCertificates = () => {
               </div>
               <Field label="Title (optional)" value={title} onChange={setTitle} placeholder="AWS Certified Developer" />
               <Field label="Issuer (optional)" value={issuer} onChange={setIssuer} placeholder="Amazon Web Services" />
+              <Field
+                label="Display order (lower = shows first, leave blank for last)"
+                type="number"
+                value={order}
+                onChange={setOrder}
+                placeholder="1"
+              />
 
               <button
                 type="submit"

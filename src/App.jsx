@@ -16,7 +16,7 @@ import { AdminAuthProvider } from "./context/AdminAuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import AdminRoute from "./components/AdminRoute";
 
-// Portfolio (MUI + react-swipeable-views) and the project detail page are
+// Portfolio (MUI-based) and the project detail page are
 // two of the heaviest chunks in the app — lazy-loading them means the
 // initial page load only pulls in what's needed above the fold.
 const Portofolio = lazy(() => import("./Pages/Portofolio"));
