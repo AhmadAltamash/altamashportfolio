@@ -29,6 +29,7 @@ const AdminLogin = lazy(() => import("./Pages/Admin/AdminLogin"));
 const AdminLayout = lazy(() => import("./Pages/Admin/AdminLayout"));
 const AdminProjects = lazy(() => import("./Pages/Admin/AdminProjects"));
 const AdminCertificates = lazy(() => import("./Pages/Admin/AdminCertificates"));
+const AdminComments = lazy(() => import("./Pages/Admin/AdminComments"));
 const AdminExperience = lazy(() => import("./Pages/Admin/AdminExperience"));
 const AdminSettings = lazy(() => import("./Pages/Admin/AdminSettings"));
 
@@ -157,6 +158,7 @@ function App() {
             <Route index element={<AdminProjects />} />
             <Route path="projects" element={<AdminProjects />} />
             <Route path="certificates" element={<AdminCertificates />} />
+            <Route path="comments" element={<AdminComments />} />
             <Route path="experience" element={<AdminExperience />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>

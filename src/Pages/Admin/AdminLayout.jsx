@@ -1,5 +1,5 @@
 import { NavLink, Outlet, Link } from "react-router-dom";
-import { LayoutDashboard, FolderKanban, Award, Briefcase, Settings, LogOut, ExternalLink } from "lucide-react";
+import { LayoutDashboard, FolderKanban, Award, Briefcase, Settings, LogOut, ExternalLink, MessageSquare } from "lucide-react";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import SEO from "../../components/SEO";
 
@@ -7,6 +7,7 @@ const navItems = [
   { to: "/admin/projects", label: "Projects", icon: FolderKanban },
   { to: "/admin/certificates", label: "Certificates", icon: Award },
   { to: "/admin/experience", label: "Experience", icon: Briefcase },
+  { to: "/admin/comments", label: "Comments", icon: MessageSquare },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
