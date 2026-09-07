@@ -225,7 +225,7 @@ const AboutPage = () => {
               data-aos="fade-right"
               data-aos-duration="1500"
             >
-              {siteSettings?.tagline || "With a year of experience, I have honed my skills in frontend and backend development, with a focus on user friendly ,astonishing and animated websites."}
+              {siteSettings?.tagline || "With 3+ year of experience, I have honed my skills in frontend and backend development, with a focus on user friendly ,astonishing and animated websites."}
             </p>
 
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full">
