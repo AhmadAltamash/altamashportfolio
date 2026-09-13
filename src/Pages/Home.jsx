@@ -1,59 +1,14 @@
-import { useState, useEffect, useCallback, memo } from "react"
+import { useState, useEffect, useCallback, memo, lazy, Suspense } from "react"
 import { Github, Linkedin, Mail, ExternalLink, Instagram, Sparkles } from "lucide-react"
-import { DotLottieReact } from '@lottiefiles/dotlottie-react'
+import { motion } from "framer-motion"
+import { RevealBlock } from "../components/ScrollReveal"
 
-const CODE_LINES = [
-  { indent: 0, tokens: [{ t: "const", c: "text-purple-400" }, { t: " developer ", c: "text-gray-200" }, { t: "=", c: "text-purple-400" }, { t: " {", c: "text-gray-400" }] },
-  { indent: 1, tokens: [{ t: "name", c: "text-blue-300" }, { t: ": ", c: "text-gray-400" }, { t: "'Altamash Ahmad'", c: "text-green-400" }, { t: ",", c: "text-gray-400" }] },
-  { indent: 1, tokens: [{ t: "role", c: "text-blue-300" }, { t: ": ", c: "text-gray-400" }, { t: "'Full Stack Developer'", c: "text-green-400" }, { t: ",", c: "text-gray-400" }] },
-  { indent: 1, tokens: [{ t: "stack", c: "text-blue-300" }, { t: ": ", c: "text-gray-400" }, { t: "['React', 'Node.js', 'Python']", c: "text-orange-300" }, { t: ",", c: "text-gray-400" }] },
-  { indent: 1, tokens: [{ t: "available", c: "text-blue-300" }, { t: ": ", c: "text-gray-400" }, { t: "true", c: "text-pink-400" }] },
-  { indent: 0, tokens: [{ t: "};", c: "text-gray-400" }] },
-];
-
-const CodeEditorVisual = memo(({ isHovering }) => {
-  const [visibleLines, setVisibleLines] = useState(0);
-
-  useEffect(() => {
-    if (visibleLines >= CODE_LINES.length) return;
-    const timer = setTimeout(() => setVisibleLines((v) => v + 1), 350);
-    return () => clearTimeout(timer);
-  }, [visibleLines]);
-
-  return (
-    <div
-      className={`w-full max-w-md mx-auto rounded-2xl border border-white/10 bg-[#0a0a1a]/90 backdrop-blur-xl shadow-2xl overflow-hidden transition-all duration-500 ${
-        isHovering ? "scale-105 -rotate-1 shadow-purple-500/20" : "scale-100"
-      }`}
-    >
-      {/* Window chrome */}
-      <div className="flex items-center gap-2 px-4 py-3 bg-white/5 border-b border-white/10">
-        <span className="w-3 h-3 rounded-full bg-red-500/70" />
-        <span className="w-3 h-3 rounded-full bg-yellow-500/70" />
-        <span className="w-3 h-3 rounded-full bg-green-500/70" />
-        <span className="ml-3 text-xs text-gray-500 font-mono">portfolio.js</span>
-      </div>
-
-      {/* Code body */}
-      <div className="p-5 sm:p-6 font-mono text-xs sm:text-sm leading-relaxed min-h-[220px] sm:min-h-[260px]">
-        {CODE_LINES.slice(0, visibleLines).map((line, i) => (
-          <div key={i} style={{ paddingLeft: `${line.indent * 1.25}rem` }} className="whitespace-pre">
-            <span className="text-gray-600 select-none mr-3">{String(i + 1).padStart(2, "0")}</span>
-            {line.tokens.map((tok, j) => (
-              <span key={j} className={tok.c}>{tok.t}</span>
-            ))}
-          </div>
-        ))}
-        {visibleLines < CODE_LINES.length && (
-          <div style={{ paddingLeft: `${(CODE_LINES[visibleLines]?.indent || 0) * 1.25}rem` }}>
-            <span className="text-gray-600 select-none mr-3">{String(visibleLines + 1).padStart(2, "0")}</span>
-            <span className="inline-block w-2 h-4 bg-purple-400 animate-pulse align-middle" />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-});
+// Lazy-loaded: this pulls in Three.js + React Three Fiber, a genuinely
+// heavy set of libraries. Since Home isn't itself code-split (it's on the
+// initial route), loading this eagerly would bloat the very first bundle
+// every visitor downloads. Splitting it into its own chunk means it loads
+// in the background after the page is already interactive.
+const ProfileCardScene = lazy(() => import("../components/ProfileCardScene"));
 
 // Memoized Components
 const StatusBadge = memo(() => (
@@ -71,20 +26,30 @@ const StatusBadge = memo(() => (
 ));
 
 const MainTitle = memo(() => (
-  <div className="space-y-2" data-aos="fade-up" data-aos-delay="600">
+  <div className="space-y-2">
     <h1 className="text-5xl sm:text-6xl md:text-6xl lg:text-6xl xl:text-7xl font-bold tracking-tight">
       <span className="relative inline-block">
         <span className="absolute -inset-2 bg-gradient-to-r from-[#6366f1] to-[#a855f7] blur-2xl opacity-20"></span>
-        <span className="relative hero-gradient-text">
+        <motion.span
+          className="relative hero-gradient-text inline-block"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+        >
           Full Stack
-        </span>
+        </motion.span>
       </span>
       <br />
       <span className="relative inline-block mt-2">
         <span className="absolute -inset-2 bg-gradient-to-r from-[#6366f1] to-[#a855f7] blur-2xl opacity-20"></span>
-        <span className="relative bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent">
+        <motion.span
+          className="relative bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent inline-block"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut", delay: 0.22 }}
+        >
           Developer
-        </span>
+        </motion.span>
       </span>
     </h1>
   </div>
@@ -177,23 +142,6 @@ const Home = () => {
     return () => clearTimeout(timeout);
   }, [handleTyping, isTyping]);
 
-  // Lottie configuration
-  const lottieOptions = {
-    src: "https://lottie.host/58753882-bb6a-49f5-a2c0-950eda1e135a/NLbpVqGegK.lottie",
-    loop: true,
-    autoplay: true,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
-      progressiveLoad: true,
-    },
-    style: { width: "100%", height: "100%" },
-    className: `w-full h-full transition-all duration-500 ${
-      isHovering 
-        ? "scale-[180%] sm:scale-[160%] md:scale-[150%] lg:scale-[145%] rotate-2" 
-        : "scale-[175%] sm:scale-[155%] md:scale-[145%] lg:scale-[140%]"
-    }`
-  };
-
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] overflow-hidden" id="Home">
       <div className={`relative z-10 transition-all duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"}`}>
@@ -216,11 +164,11 @@ const Home = () => {
                 </div>
 
                 {/* Description */}
-                <p className="text-base md:text-lg text-[var(--text-secondary)] max-w-xl leading-relaxed font-light"
-                  data-aos="fade-up"
-                  data-aos-delay="1000">
+                <RevealBlock
+                  className="text-base md:text-lg text-[var(--text-secondary)] max-w-xl leading-relaxed font-light"
+                >
                   A passionate Full Stack developer from India, Eager to learn new Languages and Framework, Expertise in making User Friendly Web Pages.
-                </p>
+                </RevealBlock>
 
                 {/* Tech Stack */}
                 <div className="flex flex-wrap gap-3 justify-start" data-aos="fade-up" data-aos-delay="1200">
@@ -244,19 +192,22 @@ const Home = () => {
               </div>
             </div>
 
-             <div className="w-full py-[10%] sm:py-0 lg:w-1/2 h-[380px] sm:h-[450px] md:h-[550px] lg:h-[600px] xl:h-[750px] relative flex items-center justify-center order-2 lg:order-2 mt-8 lg:mt-0"
+            {/* Right Column - Optimized Lottie Animation */}
+            <div className="w-full py-[10%] sm:py-0 lg:w-1/2 h-[380px] sm:h-[450px] md:h-[550px] lg:h-[600px] xl:h-[750px] relative flex items-center justify-center order-2 lg:order-2 mt-8 lg:mt-0"
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
               data-aos="fade-left"
               data-aos-delay="600">
-              <div className="relative w-full h-full flex items-center justify-center opacity-90">
+              <div className="relative w-full h-full opacity-90">
                 <div className={`absolute inset-0 bg-gradient-to-r from-[#6366f1]/10 to-[#a855f7]/10 rounded-3xl blur-3xl transition-all duration-700 ease-in-out ${
                   isHovering ? "opacity-50 scale-105" : "opacity-20 scale-100"
                 }`}>
                 </div>
 
-                <div className="relative z-10 w-full px-2">
-                  <CodeEditorVisual isHovering={isHovering} />
+                <div className="relative z-10 w-full h-full opacity-90">
+                  <Suspense fallback={null}>
+                    <ProfileCardScene />
+                  </Suspense>
                 </div>
 
                 <div className={`absolute inset-0 pointer-events-none transition-all duration-700 ${

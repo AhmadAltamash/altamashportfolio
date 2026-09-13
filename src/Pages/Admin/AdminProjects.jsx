@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { db, collection } from "../../firebase";
 import { getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore";
 import { Plus, Pencil, Trash2, X, Loader2, UploadCloud } from "lucide-react";
-import { uploadToCloudinary } from "../../utils/cloudinary";
+import { uploadToCloudinary, deleteFromCloudinary } from "../../utils/cloudinary";
 import Field from "../../components/admin/Field";
 
 const emptyForm = {
@@ -84,6 +84,14 @@ const AdminProjects = () => {
       let imgUrl = form.Img;
       if (imageFile) {
         imgUrl = await uploadToCloudinary(imageFile, "Portfolio/projects");
+        // Replacing an existing photo — the old one is now orphaned on
+        // Cloudinary, clean it up rather than leaving it to accumulate.
+        if (editingId && form.Img) {
+          const result = await deleteFromCloudinary(form.Img);
+          if (!result.ok) {
+            alert(`Saved, but couldn't remove the old photo from Cloudinary: ${result.reason}. You may need to delete it manually from your Cloudinary media library.`);
+          }
+        }
       }
 
       const payload = {
@@ -113,9 +121,13 @@ const AdminProjects = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (project) => {
     if (!window.confirm("Delete this project? This can't be undone.")) return;
-    await deleteDoc(doc(db, "projects", id));
+    await deleteDoc(doc(db, "projects", project.id));
+    const result = await deleteFromCloudinary(project.Img);
+    if (!result.ok) {
+      alert(`Project deleted, but couldn't remove its photo from Cloudinary: ${result.reason}. You may need to delete it manually from your Cloudinary media library.`);
+    }
     await load();
   };
 
@@ -153,7 +165,7 @@ const AdminProjects = () => {
                 <button onClick={() => openEdit(p)} className="p-2 rounded-lg bg-white/5 hover:bg-white/10">
                   <Pencil className="w-4 h-4" />
                 </button>
-                <button onClick={() => handleDelete(p.id)} className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20">
+                <button onClick={() => handleDelete(p)} className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>

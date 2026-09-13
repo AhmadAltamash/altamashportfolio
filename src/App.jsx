@@ -11,6 +11,7 @@ import Navbar from "./components/Navbar";
 import WelcomeScreen from "./Pages/WelcomeScreen";
 import ThankYouPage from "./Pages/ThankYou";
 import JoinAvailabilityButton from "./components/JoinAvailabilityButton";
+import CustomCursor from "./components/CustomCursor";
 import { AnimatePresence } from 'framer-motion';
 import { AdminAuthProvider } from "./context/AdminAuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -30,6 +31,8 @@ const AdminLayout = lazy(() => import("./Pages/Admin/AdminLayout"));
 const AdminProjects = lazy(() => import("./Pages/Admin/AdminProjects"));
 const AdminCertificates = lazy(() => import("./Pages/Admin/AdminCertificates"));
 const AdminComments = lazy(() => import("./Pages/Admin/AdminComments"));
+const AdminTechStack = lazy(() => import("./Pages/Admin/AdminTechStack"));
+const AdminProfileCards = lazy(() => import("./Pages/Admin/AdminProfileCards"));
 const AdminExperience = lazy(() => import("./Pages/Admin/AdminExperience"));
 const AdminSettings = lazy(() => import("./Pages/Admin/AdminSettings"));
 
@@ -76,7 +79,7 @@ const LandingPage = ({ showWelcome, setShowWelcome }) => {
         <center>
           <hr className="my-3 border-gray-400 opacity-15 sm:mx-auto lg:my-6 text-center" />
           <span className="block text-sm pb-4 text-[var(--text-secondary)] text-center">
-            © 2026{" "}
+            © 2025{" "}
             <a href="/" className="hover:underline cursor-pointer">
               Altamash
             </a>
@@ -98,7 +101,7 @@ const ProjectPageLayout = () => (
       <center>
         <hr className="my-3 border-gray-400 opacity-15 sm:mx-auto lg:my-6 text-center" />
         <span className="block text-sm pb-4 text-[var(--text-secondary)] text-center">
-          © 2026{" "}
+          © 2024{" "}
           <a href="/" className="hover:underline">
             Altamash
           </a>
@@ -131,6 +134,7 @@ function App() {
   return (
     <ThemeProvider>
       <AdminAuthProvider>
+        <CustomCursor />
         <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage showWelcome={showWelcome} setShowWelcome={setShowWelcome} />} />
@@ -159,6 +163,8 @@ function App() {
             <Route path="projects" element={<AdminProjects />} />
             <Route path="certificates" element={<AdminCertificates />} />
             <Route path="comments" element={<AdminComments />} />
+            <Route path="techstack" element={<AdminTechStack />} />
+            <Route path="profile-cards" element={<AdminProfileCards />} />
             <Route path="experience" element={<AdminExperience />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>

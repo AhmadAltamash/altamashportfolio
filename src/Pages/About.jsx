@@ -1,5 +1,7 @@
 import { useEffect, useState, memo, useMemo } from "react"
 import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles } from "lucide-react"
+import { motion } from "framer-motion"
+import { RevealBlock } from "../components/ScrollReveal"
 import { db, collection } from "../firebase"
 import { getDocs, doc, getDoc } from "firebase/firestore"
 
@@ -205,28 +207,33 @@ const AboutPage = () => {
           <div className="space-y-6 text-center lg:text-left">
             <h2 
               className="text-3xl sm:text-4xl lg:text-5xl font-bold"
-              data-aos="fade-right"
-              data-aos-duration="1000"
             >
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">
+              <motion.span
+                className="block text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
                 Hello, I&apos;m
-              </span>
-              <span 
+              </motion.span>
+              <motion.span
                 className="block mt-2 text-[var(--text-primary)]"
-                data-aos="fade-right"
-                data-aos-duration="1300"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.5, ease: "easeOut", delay: 0.12 }}
               >
                 Altamash Ahmad
-              </span>
+              </motion.span>
             </h2>
             
-            <p 
+            <RevealBlock
               className="text-base sm:text-lg lg:text-xl text-[var(--text-secondary)] leading-relaxed text-justify pb-4 sm:pb-0"
-              data-aos="fade-right"
-              data-aos-duration="1500"
+              delay={0.2}
             >
               {siteSettings?.tagline || "With 3+ year of experience, I have honed my skills in frontend and backend development, with a focus on user friendly ,astonishing and animated websites."}
-            </p>
+            </RevealBlock>
 
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full">
               <a href={siteSettings?.cvUrl || "https://drive.google.com/file/d/1-ZtQBGuNwtdrQCgFBPiJVAF2D7OmWOMW/view?usp=drive_link"} className="w-full lg:w-auto" target="_blank" rel="noopener noreferrer">

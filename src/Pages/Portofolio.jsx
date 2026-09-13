@@ -133,32 +133,12 @@ function a11yProps(index) {
   };
 }
 
-const techStacks = [
-  { icon: "html.svg", language: "HTML" },
-  { icon: "css.svg", language: "CSS" },
-  { icon: "javascript.svg", language: "JavaScript" },
-  { icon: "typescript.svg", language: "TypeScript" },
-  { icon: "tailwind.svg", language: "Tailwind CSS" },
-  { icon: "next.svg", language: "Next JS" },
-  { icon: "reactjs.svg", language: "React JS" },
-  { icon: "nodejs.svg", language: "Node JS" },
-  { icon: "express.svg", language: "Express JS" },
-  { icon: "mongodb.svg", language: "Mongo DB" },
-  { icon: "postgresql.svg", language: "PostgreSQL" },
-  { icon: "java.svg", language: "Java" },
-  { icon: "python.svg", language: "Python" },
-  { icon: "docker.svg", language: "Docker" },
-  { icon: "jenkins.svg", language: "Jenkins" },
-  { icon: "kafka.svg", language: "Apache Kafka" },
-  { icon: "firebase.svg", language: "Firebase" },
-  { icon: "figma.svg", language: "Figma" },
-];
-
 export default function FullWidthTabs() {
   const theme = useTheme();
   const [value, setValue] = useState(0);
   const [projects, setProjects] = useState([]);
   const [certificates, setCertificates] = useState([]);
+  const [techStacks, setTechStacks] = useState([]);
   const [showAllProjects, setShowAllProjects] = useState(false);
   const [showAllCertificates, setShowAllCertificates] = useState(false);
   const isMobile = window.innerWidth < 768;
@@ -166,45 +146,54 @@ export default function FullWidthTabs() {
   const PROJECTS_INITIAL_COUNT = 3;
 
   const fetchData = useCallback(async () => {
-    try {
-      const projectCollection = collection(db, "projects");
-      const certificateCollection = collection(db, "certificates");
-
-      const [projectSnapshot, certificateSnapshot] = await Promise.all([
-        getDocs(projectCollection),
-        getDocs(certificateCollection),
-      ]);
-
-      const projectData = projectSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        TechStack: doc.data().TechStack || [],
-      }));
-
-      // Lower Order shows first; projects without an Order set fall to the end.
-      projectData.sort((a, b) => {
+    const sortByOrder = (arr) => {
+      arr.sort((a, b) => {
         const orderA = a.Order ?? Infinity;
         const orderB = b.Order ?? Infinity;
         return orderA - orderB;
       });
+      return arr;
+    };
 
-      const certificateData = certificateSnapshot.docs.map((doc) => doc.data());
+    // Promise.allSettled rather than Promise.all: each collection is fetched
+    // independently, so a failure on one (e.g. a brand-new collection that
+    // doesn't have its Firestore security rule set up yet) can't take the
+    // other two down with it. Each one falls back to an empty list on
+    // failure instead of leaving everything unset.
+    const [projectResult, certificateResult, techStackResult] = await Promise.allSettled([
+      getDocs(collection(db, "projects")),
+      getDocs(collection(db, "certificates")),
+      getDocs(collection(db, "techstack")),
+    ]);
 
-      // Lower Order shows first; certificates without an Order set fall to the end.
-      certificateData.sort((a, b) => {
-        const orderA = a.Order ?? Infinity;
-        const orderB = b.Order ?? Infinity;
-        return orderA - orderB;
-      });
-
+    if (projectResult.status === "fulfilled") {
+      const projectData = sortByOrder(
+        projectResult.value.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+          TechStack: doc.data().TechStack || [],
+        }))
+      );
       setProjects(projectData);
-      setCertificates(certificateData);
-
-      // Store in localStorage
       localStorage.setItem("projects", JSON.stringify(projectData));
+    } else {
+      console.error("Error fetching projects:", projectResult.reason);
+    }
+
+    if (certificateResult.status === "fulfilled") {
+      const certificateData = sortByOrder(certificateResult.value.docs.map((doc) => doc.data()));
+      setCertificates(certificateData);
       localStorage.setItem("certificates", JSON.stringify(certificateData));
-    } catch (error) {
-      console.error("Error fetching data:", error);
+    } else {
+      console.error("Error fetching certificates:", certificateResult.reason);
+    }
+
+    if (techStackResult.status === "fulfilled") {
+      const techStackData = sortByOrder(techStackResult.value.docs.map((doc) => doc.data()));
+      setTechStacks(techStackData);
+      localStorage.setItem("techstack", JSON.stringify(techStackData));
+    } else {
+      console.error("Error fetching tech stack:", techStackResult.reason);
     }
   }, []);
 
@@ -401,11 +390,11 @@ export default function FullWidthTabs() {
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:gap-8 gap-5">
                 {techStacks.map((stack, index) => (
                   <div
-                    key={index}
+                    key={stack.id || index}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
                   >
-                    <TechStackIcon TechStackIcon={stack.icon} Language={stack.language} />
+                    <TechStackIcon TechStackIcon={stack.Icon} Language={stack.Language} />
                   </div>
                 ))}
               </div>

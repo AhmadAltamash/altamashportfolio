@@ -49,7 +49,6 @@ html.light {
 	padding: 0;
 	box-sizing: border-box;
 	font-family: "Poppins", serif;
-	scroll-behavior: smooth;
 	scrollbar-width: thin;
 	scrollbar-color: rgba(99, 102, 241, 0.3) rgba(12, 5, 53, 0.356);
 }
@@ -61,8 +60,16 @@ html,
 body {
 	overflow-x: hidden;
 	background: var(--bg-primary);
-	scroll-behavior: smooth !important;
 	transition: background-color 0.3s ease;
+}
+
+/* Smooth scrolling for anchor links and scrollIntoView, but only when the
+   visitor hasn't asked their OS/browser for reduced motion — forcing an
+   animated scroll on people who've opted out can trigger real discomfort. */
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		scroll-behavior: smooth;
+	}
 }
 
 @keyframes blob {
@@ -272,3 +279,36 @@ body {
 	user-select: none;
 	cursor: default;
   } */
+
+/* ============================================================
+   Custom cursor — a small trailing dot in the site's purple
+   accent, layered on top of the normal cursor as a decorative
+   highlight (not a replacement — the native cursor always stays
+   visible). Desktop/mouse only, via the component's own
+   `(hover: hover) and (pointer: fine)` check.
+   ============================================================ */
+.custom-cursor {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 22px;
+	height: 22px;
+	margin: -11px 0 0 -11px;
+	border-radius: 50%;
+	background: #c084fc; /* light purple, matches the brand accent */
+	/* difference blend-mode inverts whatever color sits underneath it, so
+	   the dot stays visible against any background — dark, light, or a
+	   similarly-purple card — instead of blending in and looking "gone". */
+	mix-blend-mode: difference;
+	pointer-events: none;
+	z-index: 999;
+	transition: transform 0.15s ease-out, opacity 0.2s ease;
+	will-change: transform;
+}
+.custom-cursor.custom-cursor-hover {
+	transform: scale(2);
+}
+.custom-cursor.custom-cursor-hidden {
+	opacity: 0;
+}
+

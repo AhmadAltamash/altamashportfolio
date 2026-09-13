@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { db, collection } from "../../firebase-comment";
 import { getDocs, query, orderBy, updateDoc, deleteDoc, doc } from "firebase/firestore";
 import { Pencil, Trash2, X, Loader2, UploadCloud, UserCircle2 } from "lucide-react";
-import { uploadToCloudinary } from "../../utils/cloudinary";
+import { uploadToCloudinary, deleteFromCloudinary } from "../../utils/cloudinary";
 import Field from "../../components/admin/Field";
 
 const AdminComments = () => {
@@ -14,6 +14,11 @@ const AdminComments = () => {
   const [message, setMessage] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
+  // Tracked separately from imagePreview, which gets overwritten with a
+  // temporary blob: URL when a new file is picked (or cleared entirely
+  // by "Remove Photo") — this is the only place the real Cloudinary URL
+  // (needed to clean it up on replace/removal) survives past that point.
+  const [existingPhoto, setExistingPhoto] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -33,6 +38,7 @@ const AdminComments = () => {
     setMessage(comment.content || "");
     setImageFile(null);
     setImagePreview(comment.profileImage || "");
+    setExistingPhoto(comment.profileImage || "");
     setError("");
     setShowForm(true);
   };
@@ -63,6 +69,16 @@ const AdminComments = () => {
         profileImageUrl = await uploadToCloudinary(imageFile, "Portfolio/portfolio-comments-icon");
       }
 
+      // The photo changed (replaced with a new one) or was removed
+      // entirely (Remove Photo, saved with no new file picked) — either
+      // way the old one is now orphaned on Cloudinary, clean it up.
+      if (existingPhoto && profileImageUrl !== existingPhoto) {
+        const result = await deleteFromCloudinary(existingPhoto);
+        if (!result.ok) {
+          alert(`Saved, but couldn't remove the old photo from Cloudinary: ${result.reason}. You may need to delete it manually from your Cloudinary media library.`);
+        }
+      }
+
       await updateDoc(doc(db, "portfolio-comments", editingId), {
         userName: name.trim(),
         content: message.trim(),
@@ -79,9 +95,15 @@ const AdminComments = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (comment) => {
     if (!window.confirm("Delete this comment? This can't be undone.")) return;
-    await deleteDoc(doc(db, "portfolio-comments", id));
+    await deleteDoc(doc(db, "portfolio-comments", comment.id));
+    if (comment.profileImage) {
+      const result = await deleteFromCloudinary(comment.profileImage);
+      if (!result.ok) {
+        alert(`Comment deleted, but couldn't remove its photo from Cloudinary: ${result.reason}. You may need to delete it manually from your Cloudinary media library.`);
+      }
+    }
     await load();
   };
 
@@ -129,7 +151,7 @@ const AdminComments = () => {
                 <button onClick={() => openEdit(c)} className="p-2 rounded-lg bg-white/5 hover:bg-white/10" aria-label="Edit comment">
                   <Pencil className="w-4 h-4" />
                 </button>
-                <button onClick={() => handleDelete(c.id)} className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20" aria-label="Delete comment">
+                <button onClick={() => handleDelete(c)} className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20" aria-label="Delete comment">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
