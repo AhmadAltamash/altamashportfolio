@@ -6,8 +6,8 @@
  */
 export const CARD_WIDTH = 1.55;
 export const CARD_HEIGHT = 2.40;
-export const CARD_SPINE = 0.075;
-export const CARD_DEPTH = 0.035;
+export const CARD_SPINE = 0.085;
+export const CARD_DEPTH = 0.030;
 export const CARD_RADIUS = 0.125;
 
 export function buildCardSpecs(count, overrides = {}) {
