@@ -81,7 +81,7 @@ const LandingPage = ({ showWelcome, setShowWelcome }) => {
           <span className="block text-sm pb-4 text-[var(--text-secondary)] text-center">
             © 2026{" "}
             <a href="/" className="hover:underline cursor-pointer">
-              Altamash
+              Altamash Ahmad
             </a>
             . All Rights Reserved.
           </span>
@@ -103,7 +103,7 @@ const ProjectPageLayout = () => (
         <span className="block text-sm pb-4 text-[var(--text-secondary)] text-center">
           © 2026{" "}
           <a href="/" className="hover:underline">
-            Altamash
+            Altamash Ahmad
           </a>
           . All Rights Reserved.
         </span>
