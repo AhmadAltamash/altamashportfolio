@@ -79,7 +79,7 @@ const LandingPage = ({ showWelcome, setShowWelcome }) => {
         <center>
           <hr className="my-3 border-gray-400 opacity-15 sm:mx-auto lg:my-6 text-center" />
           <span className="block text-sm pb-4 text-[var(--text-secondary)] text-center">
-            © 2025{" "}
+            © 2026{" "}
             <a href="/" className="hover:underline cursor-pointer">
               Altamash
             </a>
@@ -101,7 +101,7 @@ const ProjectPageLayout = () => (
       <center>
         <hr className="my-3 border-gray-400 opacity-15 sm:mx-auto lg:my-6 text-center" />
         <span className="block text-sm pb-4 text-[var(--text-secondary)] text-center">
-          © 2024{" "}
+          © 2026{" "}
           <a href="/" className="hover:underline">
             Altamash
           </a>
